@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ApplicationCommandPermissionData, ApplicationCommandType, CommandInteraction, Interaction, Message } from "discord.js";
+import { ApplicationCommandOptionData, ApplicationCommandType, CommandInteraction, MessageContextMenuInteraction } from "discord.js";
 
 export abstract class Action {
     name: string;
@@ -6,5 +6,5 @@ export abstract class Action {
     options?: ApplicationCommandOptionData[];
     type: ApplicationCommandType;
 
-    abstract run?(interaction: CommandInteraction): Promise<void>;
+    abstract run?(interaction: CommandInteraction | MessageContextMenuInteraction): Promise<void>;
 }

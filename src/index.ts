@@ -1,4 +1,4 @@
-import DiscordJS, { ApplicationCommand, Client, Collection, CommandInteraction, ContextMenuInteraction, Guild, Intents } from 'discord.js'
+import DiscordJS, { ApplicationCommand, Client, Collection, CommandInteraction, MessageContextMenuInteraction, Guild, Intents } from 'discord.js'
 import { Action } from './interfaces/Action';
 import { readdirRecursive } from './utils/readdirRecursive';
 import { BOT } from './config';
@@ -45,8 +45,6 @@ client.on('ready', async () => {
             defaultPermission: true // allow commands to be used by anyone
         }
 
-        console.log(cmdData);
-
         if (!guildCmd) {
             awaitedCommands.push(commands.create(cmdData));
         } else {
@@ -61,25 +59,10 @@ client.on('ready', async () => {
 })
 
 client.on("interactionCreate", async (interaction) => {
-    if (interaction.isCommand()) runCommand(interaction, client);
-    if (interaction.isContextMenu()) runContextMenuInteraction(interaction, client);
+    if (interaction.isCommand() || interaction.isMessageContextMenu()) runCommand(interaction, client);
 })
 
-async function runCommand(interaction: CommandInteraction, client: Client): Promise<unknown> {
-    const command = client.commands.get(interaction.commandName);
-
-    if (command.run !== undefined) {
-        try {
-            command.run(interaction);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    return;
-}
-
-async function runContextMenuInteraction(interaction: ContextMenuInteraction, client: Client): Promise<unknown> {
+async function runCommand(interaction: CommandInteraction | MessageContextMenuInteraction, client: Client): Promise<unknown> {
     const command = client.commands.get(interaction.commandName);
 
     if (command.run !== undefined) {
