@@ -1,7 +1,9 @@
-import DiscordJS, { ApplicationCommand, Client, Collection, CommandInteraction, MessageContextMenuInteraction, Guild, Intents } from 'discord.js'
+import DiscordJS, { ApplicationCommand, Client, Collection, CommandInteraction, MessageContextMenuInteraction, Guild, Intents, MessageEmbed } from 'discord.js'
 import { Action } from './interfaces/Action';
 import { readdirRecursive } from './utils/readdirRecursive';
 import { BOT } from './config';
+import translate from '@vitalets/google-translate-api';
+import { getFullLang } from './utils/getFullLang';
 
 const client = new DiscordJS.Client({
     intents: [
@@ -60,6 +62,28 @@ client.on('ready', async () => {
 
 client.on("interactionCreate", async (interaction) => {
     if (interaction.isCommand() || interaction.isMessageContextMenu()) runCommand(interaction, client);
+    if (interaction.isModalSubmit()) {
+        const { customId, fields } = interaction;
+        if (customId === 'translatemessage') {
+            const input = fields.getTextInputValue('translateMsg'), 
+            translateTo = fields.getTextInputValue('translateTo'), 
+            translateFrom = fields.getTextInputValue('translateFrom') || '';
+
+            let res;
+            try {
+                res = await translate(input, (translateFrom ? {from: translateFrom, to: translateTo} : {to: translateTo}));
+            } catch (error) {
+                interaction.reply('Sorry, an error occured: ' + error);
+                return;
+            }
+            const responseEmbed = new MessageEmbed()
+                .setColor('BLURPLE')
+                .setTitle(res.text);
+
+            responseEmbed.setFooter({ text: (translateFrom ? `Translated '${input}' from ${translateFrom} to ${translateTo}.` : `Translated '${input}' into ${translateTo}. The detected input language was ${getFullLang(res.from.language.iso)}`) });
+            interaction.reply({ embeds: [responseEmbed] });
+        }
+    }
 })
 
 async function runCommand(interaction: CommandInteraction | MessageContextMenuInteraction, client: Client): Promise<unknown> {
@@ -69,7 +93,7 @@ async function runCommand(interaction: CommandInteraction | MessageContextMenuIn
         try {
             command.run(interaction);
         } catch (error) {
-            console.log(error);
+            return interaction.reply('Sorry, an error occured. ' + error);
         }
     }
 
