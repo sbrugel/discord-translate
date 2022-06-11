@@ -1,4 +1,6 @@
-export function getFullLang(lang: string): string {
+export function getFullLang(lang: string, returnIfInvalid: boolean): string {
+    // boolean parameter: if false, will return Invalid Language if two-letter code supplied is not in dict
+    // else, returns the language that was passed into the function
     let languageList: {[index: string]:string} = {
         "af": "Afrikaans",
         "ga": "Irish",
@@ -65,5 +67,5 @@ export function getFullLang(lang: string): string {
         "id": "Indonesian",
         "yi": "Yiddish",
     }
-    return languageList[lang] || 'Invalid language';
+    return languageList[lang] || (returnIfInvalid ? lang : 'Invalid language');
 }

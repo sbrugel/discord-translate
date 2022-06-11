@@ -1,4 +1,4 @@
-import { ApplicationCommandType, Message, MessageActionRow, MessageContextMenuInteraction, MessageEmbed, Modal, ModalActionRowComponent, TextInputComponent } from "discord.js";
+import { ApplicationCommandType, MessageActionRow, MessageContextMenuInteraction, MessageEmbed, Modal, ModalActionRowComponent, TextInputComponent } from "discord.js";
 import { Action } from "../interfaces/Action";
 import translate from '@vitalets/google-translate-api';
 import { getFullLang } from "../utils/getFullLang";
@@ -25,7 +25,7 @@ export default class extends Action {
             .setCustomId('translateFrom')
             .setLabel('Language to translate this message from')
             .setStyle("SHORT")
-            .setRequired(false)   
+            .setRequired(false)  
             .setPlaceholder('If not filled, will be auto detected')
 
         const translateMsgComponent = new TextInputComponent()
@@ -50,6 +50,6 @@ export default class extends Action {
             .setColor('BLURPLE')
             .setTitle(res.text);
 
-        responseEmbed.setFooter({ text: (translateFrom ? `Translated '${input}' from ${translateFrom} to ${translateTo}.` : `Translated '${input}' into ${translateTo}. The detected input language was ${getFullLang(res.from.language.iso)}`) });
+        responseEmbed.setFooter({ text: (translateFrom ? `Translated '${input}' from ${getFullLang(translateFrom, true)} to ${getFullLang(translateTo, true)}.` : `Translated '${input}' into ${getFullLang(translateTo, true)}. The detected input language was ${getFullLang(res.from.language.iso, false)}`) });
     }
 }

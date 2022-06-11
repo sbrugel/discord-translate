@@ -35,14 +35,14 @@ export default class extends Action {
         try {
             res = await translate(input, (translateFrom ? {from: translateFrom, to: translateTo} : {to: translateTo}));
         } catch (error) {
-            return interaction.reply('Sorry, an error occured: ' + error);
+            return interaction.reply({ content: 'Sorry, an error occured: ' + error, ephemeral: true });
         }
         
         const responseEmbed = new MessageEmbed()
             .setColor('BLURPLE')
             .setTitle(res.text);
 
-        responseEmbed.setFooter({ text: (translateFrom ? `Translated '${input}' from ${translateFrom} to ${translateTo}.` : `Translated '${input}' into ${translateTo}. The detected input language was ${getFullLang(res.from.language.iso)}`) });
+        responseEmbed.setFooter({ text: (translateFrom ? `Translated '${input}' from ${getFullLang(translateFrom, true)} to ${getFullLang(translateTo, true)}.` : `Translated '${input}' into ${getFullLang(translateTo, true)}. The detected input language was ${getFullLang(res.from.language.iso, false)}`) });
         return interaction.reply({ embeds: [responseEmbed] });
     }
 }
