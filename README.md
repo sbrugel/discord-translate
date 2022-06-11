@@ -24,6 +24,9 @@ __Params__
 __Example__
 ![tm](https://i.imgur.com/aUSkr9h.gif)
 
+## Other Notes
+- Languages can be inputted via the full name (i.e. German, English, French) or by their two-character initial which Googles uses (i.e. de, en, fr)
+
 ## Libs used
 - discord.js
 - fs
